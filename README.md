@@ -1,3 +1,3 @@
 # Chat App
 
-A basic chap app, written with SvelteKit
+A basic chat app, written with SvelteKit
