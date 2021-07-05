@@ -4,8 +4,7 @@ export interface Message {
 	to: string;
 }
 
-export interface Username {
-	uuid: string;
+export interface Client {
 	name: string;
 }
 
@@ -16,9 +15,10 @@ export type Post =
 	  }
 	| {
 			type: 'username';
-			data: Username;
+			data: Client;
 	  }
 	| {
 			type: 'update';
-			data: Username;
+			data: Client;
+			success?: boolean;
 	  };

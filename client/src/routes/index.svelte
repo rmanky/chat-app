@@ -1,22 +1,39 @@
 <script type="ts">
-	import { onMount } from 'svelte';
-	import { v4 as uuidv4 } from 'uuid';
-	import type { Post, Message, Username } from 'types/message';
+	import { afterUpdate, beforeUpdate, onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import type { Post, Message, Client } from '@utils/types/message';
 
-	const username: Username = {
-		uuid: uuidv4(),
+	let newName: string = `Guest#${(Math.random() * 9999).toFixed(0)}`;
+
+	const username: Client = {
 		name: ''
 	};
 
 	const message: Message = {
-		from: username.uuid,
-		text: 'default',
+		from: '',
+		text: 'Hello, World!',
 		to: 'all'
 	};
 
-	let newName: string;
+	const clients: Client[] = [
+		{
+			name: 'all'
+		},
+		{
+			name: 'server'
+		}
+	];
+
+	let alert: string;
 	let messages: Message[] = [];
 	let webSocket: WebSocket;
+
+	$: if (messages) {
+		afterUpdate(() => {
+			const element = document.getElementById('messages');
+			element.scrollTop = element.scrollHeight;
+		});
+	}
 
 	onMount(() => {
 		webSocket = new WebSocket('ws://localhost:8080');
@@ -27,13 +44,24 @@
 				const newMessage: Message = post.data;
 				messages = [...messages, newMessage];
 			} else if (post.type === 'update') {
-				const newUsername: Username = post.data;
-				if (username.uuid === newUsername.uuid) {
+				const newUsername: Client = post.data;
+
+				if (post.success) {
 					username.name = newUsername.name;
+					message.from = newUsername.name;
+					console.log('Yep');
+				} else {
+					console.log('Nope');
+					setAlert('That username is taken!');
 				}
 			}
 		};
 	});
+
+	function setAlert(alertMessage: string) {
+		alert = alertMessage;
+		setTimeout(() => (alert = ''), 2500);
+	}
 
 	function sendMessage() {
 		const post: Post = {
@@ -46,8 +74,7 @@
 	}
 
 	function sendUsername() {
-		const update: Username = {
-			uuid: username.uuid,
+		const update: Client = {
 			name: newName
 		};
 
@@ -60,26 +87,65 @@
 	}
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-{#each messages as { from, text, to }}
-	<p>{from}: {text}</p>
-{/each}
-<p>UUID: {username.uuid}</p>
-<form on:submit|preventDefault={sendUsername}>
-	<label>
-		Username
-		<input bind:value={newName} type="text" />
-	</label>
-	<button type="submit">Update Username</button>
-</form>
-<br />
-{#if username.name}
-	<form on:submit|preventDefault={sendMessage}>
-		<label>
-			Message
-			<input bind:value={message.text} type="text" />
-		</label>
-		<button type="submit">Send Message</button>
-	</form>
+<div bg="dark-300" p="4">
+	<p text="light-300">Welcome!</p>
+</div>
+
+<div id="messages" display="flex" flex="1 col" bg="light-300" p="4" overflow="y-scroll">
+	<p>Messages</p>
+	{#each messages as { from, text, to }}
+		{#if from === 'server'}
+			<p bg="orange-300" m="t-2" p="2" border="rounded">{text}</p>
+		{:else if from === username.name}
+			<p align="self-end" text="right" bg="green-100" m="t-2" p="2" border="rounded">
+				{from}: {text}
+			</p>
+		{:else}
+			<p align="self-start" bg="blue-100" m="t-2" p="2" border="rounded">{from}: {text}</p>
+		{/if}
+	{/each}
+</div>
+{#if alert}
+	<p p="4" text="red-600" transition:fade>{alert}</p>
 {/if}
+<div bg="gray-300" p="4">
+	{#if !username.name}
+		<form on:submit|preventDefault={sendUsername}>
+			<label for="username"> Username </label>
+			<div>
+				<input id="username" bind:value={newName} type="text" />
+				<button disabled={newName?.length < 1} type="submit">Request Username</button>
+			</div>
+		</form>
+		<br />
+	{:else}
+		<p>Welcome, {username.name}</p>
+		<select>
+			{#each clients as client}
+				<option value={client}>{client.name}</option>
+			{/each}
+		</select>
+		<form on:submit|preventDefault={sendMessage}>
+			<label for="message"> Message </label>
+			<div>
+				<input id="message" bind:value={message.text} type="text" />
+				<button disabled={message.text.length < 1} type="submit">Send Message</button>
+			</div>
+		</form>
+	{/if}
+</div>
+
+<style>
+	input,
+	button {
+		@apply border-dark-400;
+		@apply border-2;
+		@apply rounded;
+		@apply p-2;
+	}
+
+	button:disabled {
+		@apply cursor-default;
+		@apply opacity-25;
+	}
+</style>
