@@ -21,11 +21,11 @@ app.use(async (context) => {
 	});
 });
 
-await app.listen({ port });
+console.log(`${Colors.blue('[INFO]')} Server listening on http://localhost:${port}`);
+
+app.listen({ port });
 
 // .get('/ws', hello)
 // .get('/', (c) => c.file('./client/build/index.html'))
 // .static('/', './client/build/')
 // .start({ port });
-
-console.log(`${Colors.blue('[INFO]')} Server listening on http://localhost:${port}`);
