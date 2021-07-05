@@ -37,15 +37,15 @@
 	}
 
 	onMount(() => {
-		webSocket = new WebSocket(`ws://localhost:${port}`);
+		webSocket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
 
 		webSocket.onclose = function (ev: CloseEvent) {
-			setAlert('Connection to the server was lost.')
-		}
+			setAlert('Connection to the server was lost.');
+		};
 
 		webSocket.onerror = function (ev: Event) {
-			setAlert('Connection to the server was lost.')
-		}
+			setAlert('Connection to the server was lost.');
+		};
 
 		webSocket.onmessage = function (ev: MessageEvent) {
 			const post: Post = JSON.parse(ev.data);
@@ -79,12 +79,12 @@
 			data: message
 		};
 
-		if(webSocket.readyState === WebSocket.OPEN) {
+		if (webSocket.readyState === WebSocket.OPEN) {
 			webSocket.send(JSON.stringify(post));
 			message.text = '';
 		} else {
-			setAlert('Server is unresponsive.')
-		}		
+			setAlert('Server is unresponsive.');
+		}
 	}
 
 	function sendUsername() {
@@ -97,10 +97,10 @@
 			data: update
 		};
 
-		if(webSocket.readyState === WebSocket.OPEN) {
+		if (webSocket.readyState === WebSocket.OPEN) {
 			webSocket.send(JSON.stringify(post));
 		} else {
-			setAlert('Server is unresponsive.')
+			setAlert('Server is unresponsive.');
 		}
 	}
 </script>
@@ -143,7 +143,7 @@
 	{:else}
 		<p>Welcome, {username.name}</p>
 		<label for="to" m="r-1"> Send to</label>
-		<select id="to" w="min-12" bind:value={message.to}>
+		<select id="to" w="min-24" bind:value={message.to}>
 			{#each clients as client (client.name)}
 				{#if client.name != 'Server' && client.name != username.name}
 					<option value={client.name}>{client.name}</option>
