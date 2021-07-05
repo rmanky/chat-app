@@ -39,6 +39,14 @@
 	onMount(() => {
 		webSocket = new WebSocket(`ws://localhost:${port}`);
 
+		webSocket.onclose = function (ev: CloseEvent) {
+			setAlert('Connection to the server was lost.')
+		}
+
+		webSocket.onerror = function (ev: Event) {
+			setAlert('Connection to the server was lost.')
+		}
+
 		webSocket.onmessage = function (ev: MessageEvent) {
 			const post: Post = JSON.parse(ev.data);
 			if (post.type === 'message') {
@@ -71,8 +79,12 @@
 			data: message
 		};
 
-		webSocket.send(JSON.stringify(post));
-		message.text = '';
+		if(webSocket.readyState === WebSocket.OPEN) {
+			webSocket.send(JSON.stringify(post));
+			message.text = '';
+		} else {
+			setAlert('Server is unresponsive.')
+		}		
 	}
 
 	function sendUsername() {
@@ -85,7 +97,11 @@
 			data: update
 		};
 
-		webSocket.send(JSON.stringify(post));
+		if(webSocket.readyState === WebSocket.OPEN) {
+			webSocket.send(JSON.stringify(post));
+		} else {
+			setAlert('Server is unresponsive.')
+		}
 	}
 </script>
 
