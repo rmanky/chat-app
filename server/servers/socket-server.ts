@@ -3,7 +3,7 @@ import type { Post, Message, Client } from '../../utils/types/message.ts';
 import * as Colors from 'https://deno.land/std@0.100.0/fmt/colors.ts';
 
 export function SocketServer() {
-    const port = 8080;
+    const port = 3000;
 	const wss = new WebSocketServer(port);
 
     console.log(`${Colors.blue('[INFO]')} Socket server listening on http://localhost:${port}`);
@@ -74,11 +74,11 @@ export function SocketServer() {
 			if (message.to === 'All') {
 				broadcast(JSON.stringify(post));
 			} else {
-				const client_to = clients.find((_cl) => _cl.name === message.to);
-				if (!client_to?.websocket?.isClosed) client_to?.websocket?.send(JSON.stringify(post));
+				const clientTo = clients.find((_cl) => _cl.name === message.to);
+				if (!clientTo?.websocket?.isClosed) clientTo?.websocket?.send(JSON.stringify(post));
 
-				const client_from = clients.find((_cl) => _cl.name === message.from);
-				if (!client_from?.websocket?.isClosed) client_from?.websocket?.send(JSON.stringify(post));
+				const clientFrom = clients.find((_cl) => _cl.name === message.from);
+				if (!clientFrom?.websocket?.isClosed) clientFrom?.websocket?.send(JSON.stringify(post));
 			}
 		}
 	}
