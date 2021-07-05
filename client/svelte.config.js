@@ -1,6 +1,6 @@
 import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-static';
-import WindiCSS from 'vite-plugin-windicss/dist/index.mjs'
+import WindiCSS from 'vite-plugin-windicss/dist/index.mjs';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -13,10 +13,8 @@ const config = {
 		target: '#svelte',
 		adapter: adapter(),
 		vite: {
-            plugins: [
-                WindiCSS(),
-            ]
-        }
+			plugins: [WindiCSS()]
+		}
 	}
 };
 

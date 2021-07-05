@@ -1,5 +1,5 @@
 import { WebSocketClient, WebSocketServer } from 'https://deno.land/x/websocket@v0.1.1/mod.ts';
-import type { Post, Message, Client } from '../../utils/types/message.ts';
+import type { Post, Message, Client } from '../utils/types/message.ts';
 import * as Colors from 'https://deno.land/std@0.100.0/fmt/colors.ts';
 
 export function SocketServer() {

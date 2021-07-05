@@ -14,7 +14,7 @@
 	<div
 		w="400px"
 		h="800px"
-        text="light-300"
+		text="light-300"
 		bg="dark-600"
 		border="rounded-lg"
 		shadow="lg"

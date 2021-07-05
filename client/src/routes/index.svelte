@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import type { Post, Message, Client } from '@utils/types/message';
 
-	let newName: string = `Guest #${(Math.random() * 9999).toFixed(0)}`;
+	const port = 3000;
 
 	const username: Client = {
 		name: ''
@@ -25,8 +25,9 @@
 	];
 
 	let alert: string = '';
-	let messages: Message[] = [];
 	let webSocket: WebSocket;
+	let messages: Message[] = [];
+	let newName: string = `Guest #${(Math.random() * 9999).toFixed(0)}`;
 
 	$: if (messages) {
 		afterUpdate(() => {
@@ -36,7 +37,7 @@
 	}
 
 	onMount(() => {
-		webSocket = new WebSocket('ws://localhost:8080');
+		webSocket = new WebSocket(`ws://localhost:${port}`);
 
 		webSocket.onmessage = function (ev: MessageEvent) {
 			const post: Post = JSON.parse(ev.data);

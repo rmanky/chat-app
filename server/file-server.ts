@@ -6,8 +6,8 @@ export function FileServer(): void {
 	const app = new Application();
 	const port = 8080;
 	app
-		.get('/', (c) => c.file('../client/build/index.html'))
-		.static('/', '../client/build/', cors())
+		.get('/', (c) => c.file('./client/build/index.html'))
+		.static('/', './client/build/', cors())
 		.start({ port });
 
 	console.log(`${Colors.blue('[INFO]')} File server listening on http://localhost:${port}`);
