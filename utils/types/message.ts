@@ -21,4 +21,8 @@ export type Post =
 			type: 'update';
 			data: Client;
 			success?: boolean;
+	  }
+	| {
+			type: 'list';
+			data: Client[];
 	  };
